@@ -190,16 +190,16 @@ knife cook [user]@[host] -p [port]
 
 ### 5. Recommendations
 
-If you're using a SSH Credentials to access your server, we recommend to lock your deploy user password.
-That way, your user's password is going to expire in a very short intervals. You can do this executing:
+If you're using SSH Credentials to access your server, we recommend to lock your deploy user password.
+That way, your user's password is going to expire in very short intervals. You can do this executing:
 
 ```bash
 sudo passwd <deploy_user> -l
 ```
 
 Maybe you will experience problems with `fcgiwrap`, because this service has www-data user as owner. If you get
-a `Permission Denied` error trying to serve your CGI scripts, change the owner and group of the socket to to your
-to match your deploy user and group.
+a `Permission Denied` error trying to serve your CGI scripts, change the owner and group of the socket to match 
+your deploy user and group.
 
 ```bash
 sudo chown <deploy_user>:<deploy:group> /var/run/fcgiwrap.socket
