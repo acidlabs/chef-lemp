@@ -1,47 +1,3 @@
-# Chef-LEMP
-
-Kitchen to setup an Ubuntu Server ready to roll with Nginx, MySQL and PHP.
-
-## Requirements
-
-* Ubuntu 12.04
-
-## Usage
-
-To cook with this kitchen you must follow four easy steps.
-
-### 1. Prepare your local working copy
-
-```bash
-git clone git://github.com:acidlabs/chef-lemp.git
-cd chef-lemp
-bundle install
-bundle exec librarian-chef install
-```
-
-### 2. Prepare the servers you want to configure
-
-We need to copy chef-solo to any server we’re going to setup. For each server, execute
-
-```bash
-bundle exec knife prepare [user]@[host] -p [port]
-```
-
-where
-
-* *user* is a user in the server with sudo and an authorized key.
-* *host* is the ip or host of the server.
-* *port* is the port in which ssh is listening on the server.
-
-### 3. Define the specs for each server
-
-If you take a look at the *nodes* folder, you’re going to see files called [host].json, corresponding to the hosts or ips of the servers we previously prepared, plus a file called *localhost.json.example* which is, as its name suggests, and example.
-
-The specs for each server needs to be defined in those files, and the structure is exactly the same as in the example.
-
-For the very same reason, we’re going to exaplain the example for you to ride on your own pony later on.
-
-```json
 {
 // This is the list of the recipes that are going to be cooked.
   "run_list": [
@@ -176,31 +132,3 @@ For the very same reason, we’re going to exaplain the example for you to ride 
     "poll_start_delay" : "120"
   }
 }
-```
-
-Take a look to each cookbook `attributes/` files for more configuration parameters.
-
-### 4. Happy cooking
-
-We’re now ready to cook. For each server you want to setup, execute
-
-```bash
-knife cook [user]@[host] -p [port]
-```
-
-### 5. Recommendations
-
-If you're using a SSH Credentials to access your server, we recommend to lock your deploy user password.
-That way, your user's password is going to expire in a very short intervals. You can do this executing:
-
-```bash
-sudo passwd <deploy_user> -l
-```
-
-Maybe you will experience problems with `fcgiwrap`, because this service has www-data user as owner. If you get
-a `Permission Denied` error trying to serve your CGI scripts, change the owner and group of the socket to to your
-to match your deploy user and group.
-
-```bash
-sudo chown <deploy_user>:<deploy:group> /var/run/fcgiwrap.socket
-```
