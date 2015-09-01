@@ -1,12 +1,15 @@
 #!/usr/bin/env ruby
 #^syntax detection
 
-site 'http://community.opscode.com/api/v1'
+site 'https://supermarket.getchef.com/api/v1'
 
 cookbook 'apt'
+cookbook 'mysql', '5.5.3'
+cookbook 'sudo'
 cookbook 'build-essential'
 cookbook 'runit'
-cookbook 'ohai'
-cookbook 'git'
+cookbook 'git',   '4.1.0'
+cookbook 'nginx',         git: "https://gitlab.acid.cl/acidlabs/chef-nginx.git"
 cookbook 'openssl'
-# cookbook 'redis' if you need redis uncomment this
+cookbook 'varnish'
+cookbook 'php-fpm'

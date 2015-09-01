@@ -12,10 +12,6 @@
     "recipe[nginx]",
     "recipe[nginx::apps]",
     "recipe[mysql::server]",
-    "recipe[monit]",
-    "recipe[monit::mysql]",
-    "recipe[monit::nginx]",
-    "recipe[monit::ssh]"
   ],
 
 // You must define the sudoers users. You must created them before cooking.
@@ -123,12 +119,4 @@
   "php-fpm" : {
     "user"  : "deploy",
     "group" : "deploy"
-  },
-
-// Setting monit
-  "monit" : {
-    "notify_email"     : "notify@example.com",
-    "poll_period"      : "60",
-    "poll_start_delay" : "120"
   }
-}

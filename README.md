@@ -198,9 +198,25 @@ sudo passwd <deploy_user> -l
 ```
 
 Maybe you will experience problems with `fcgiwrap`, because this service has www-data user as owner. If you get
-a `Permission Denied` error trying to serve your CGI scripts, change the owner and group of the socket to match 
+a `Permission Denied` error trying to serve your CGI scripts, change the owner and group of the socket to match
 your deploy user and group.
 
 ```bash
 sudo chown <deploy_user>:<deploy:group> /var/run/fcgiwrap.socket
+
+### 6. Testing against a vagrant machine with knife-solo
+
+Initialize the vagrant machine
+```bash
+vagrant up
+```
+Then locate the ssh key used by the vagrant machine
+```bash
+vagrant ssh-config | grep IdentityFile | sed 's/.*IdentityFile//'
+```
+Finally connect and prepare && cook knife solo
+```bash
+knife solo prepare vagrant@127.0.0.1 -p 2222 -i /Your/vagrant/private_key
+knife solo cook vagrant@127.0.0.1 nodes/vagrant.json.example -p 2222 -i /Your/vagrant/private_key
+```
 ```

@@ -1,0 +1,62 @@
+{
+// This is the list of the recipes that are going to be cooked.
+  "run_list": [
+    "recipe[sudo]",
+    "recipe[apt]",
+    "recipe[build-essential]",
+    "recipe[runit]",
+    "recipe[git]",
+    "recipe[php-fpm]",
+    "recipe[nginx]",
+    "recipe[mysql::server]",
+    "recipe[varnish]"
+  ],
+
+// You must define the sudoers users. You must created them before cooking.
+  "authorization": {
+    "sudo": {
+      "groups"        : ["sudo","admin"],
+      "users"         : ["deploy","vagrant"],
+      "passwordless"  : true
+    }
+  },
+
+// Your MySQL configuration goes here.
+  "mysql": {
+    "server_debian_password" : "my_database_password",
+    "server_root_password"   : "my_database_password",
+    "server_repl_password"   : "my_database_password",
+    "server": {
+      "packages": ["mysql-server", "libmysqld-dev"]
+    },
+
+// Here you can set some custom configuration.
+    "tunable": {
+      "log_error"                       : "/var/log/mysql/error.log",
+      "innodb_buffer_pool_size"         : "256M",
+      "innodb_additional_mem_pool_size" : "16M",
+      "innodb_flush_method"             : "O_DIRECT",
+      "max_connections"                 : "500",
+      "innodb_use_sys_malloc"           : "0"
+    }
+  },
+
+// Now we configure Nginx for our deploy user.
+  "nginx": {
+    "user"          : "deploy",
+    "distribution"  : "precise",
+    "components"    : ["main"]
+  },
+
+// All the packages you need goes here.
+  "chef-rails": {
+    "packages": ["libxml2-dev", "libxslt1-dev", "libncurses5-dev", "libncurses5-dev", "sendmail", "vim", "php5-mysql", "php5-curl", "fcgiwrap", "curl", "libcurl3", "libcurl3-dev"]
+  },
+
+// We specicy user and group of PHP-FPM.
+  "php-fpm" : {
+    "user"  : "deploy",
+    "group" : "deploy"
+  }
+}
+
