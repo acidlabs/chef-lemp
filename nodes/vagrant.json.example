@@ -43,9 +43,22 @@
 
 // Now we configure Nginx for our deploy user.
   "nginx": {
-    "user"          : "deploy",
-    "distribution"  : "precise",
-    "components"    : ["main"]
+    "user"                : "deploy",
+    "client_max_body_size": "2m",
+    "worker_processes"    : "auto",
+    "worker_connections"  : 768,
+    "repository"          : "ppa",
+    "site"                : {
+      "host"           : "127.0.0.1",
+      "upstream_ports" : ["3000"],
+      "ip"             : "0.0.0.0",
+      "listen"         : "8080"
+    }
+  },
+
+  "varnish": {
+    "listen_port"     : "80",
+    "backend_port"    : "8080"
   },
 
 // All the packages you need goes here.
