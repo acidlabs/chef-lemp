@@ -10,6 +10,9 @@ cookbook 'build-essential'
 cookbook 'runit'
 cookbook 'git',   '4.1.0'
 cookbook 'nginx',         git: "https://gitlab.acid.cl/acidlabs/chef-nginx.git"
-cookbook 'openssl'
 cookbook 'varnish'
 cookbook 'php-fpm'
+cookbook 'timezone-ii'
+cookbook 'ssh-hardening'
+cookbook 'fail2ban'
+cookbook 'dpkg_packages', git: "https://gitlab.acid.cl/acidlabs/chef-dpkg-packages.git"

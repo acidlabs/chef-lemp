@@ -3,13 +3,16 @@
   "run_list": [
     "recipe[sudo]",
     "recipe[apt]",
+    "recipe[dpkg_packages]",
+    "recipe[timezone-ii]",
     "recipe[build-essential]",
     "recipe[runit]",
     "recipe[git]",
     "recipe[php-fpm]",
-    "recipe[nginx]",
+    "recipe[nginx::server]",
     "recipe[mysql::server]",
-    "recipe[varnish]"
+    "recipe[varnish]",
+    "recipe[fail2ban]"
   ],
 
 // You must define the sudoers users. You must created them before cooking.
@@ -49,27 +52,46 @@
     "worker_connections"  : 768,
     "repository"          : "ppa",
     "site"                : {
-      "host"           : "127.0.0.1",
-      "upstream_ports" : ["3000"],
-      "ip"             : "0.0.0.0",
       "listen"         : "8080"
     }
   },
-
+// Varnish server
   "varnish": {
     "listen_port"     : "80",
     "backend_port"    : "8080"
   },
 
-// All the packages you need goes here.
-  "chef-rails": {
-    "packages": ["libxml2-dev", "libxslt1-dev", "libncurses5-dev", "libncurses5-dev", "sendmail", "vim", "php5-mysql", "php5-curl", "fcgiwrap", "curl", "libcurl3", "libcurl3-dev"]
+// List all the system packages required by the services and gems you’re using in your apps.
+   "dpkg_packages": {
+    "pkgs": {
+      "tzdata"         : { "action": "upgrade" },
+      "libxml2-dev"    : { "action": "install" },
+      "sendmail"       : { "action": "install" },
+      "vim"            : { "action": "install" },
+      "fcgiwrap"       : { "action": "install" },
+      "curl"           : { "action": "install" },
+      "libcurl3"       : { "action": "install" },
+      "libcurl3-dev"   : { "action": "install" },
+      "libxslt1-dev"   : { "action": "install" },
+      "htop"           : { "action": "install" }
+    }
   },
 
 // We specicy user and group of PHP-FPM.
   "php-fpm" : {
     "user"  : "deploy",
     "group" : "deploy"
+  },
+
+// Select Timezone you want to configure
+  "tz": "America/Santiago",
+
+// Fail2ban configuration to protect our server against SSH attack attempts
+  "fail2ban": {
+    "bantime" : 600,
+    "maxretry": 3,
+    "backend" : "auto"
   }
 }
+
 

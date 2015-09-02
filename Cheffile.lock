@@ -6,6 +6,8 @@ SITE
     chef-sugar (3.1.1)
     chef_handler (1.2.0)
     dmg (2.2.2)
+    fail2ban (2.3.0)
+      yum-epel (>= 0.0.0)
     git (4.1.0)
       build-essential (>= 0.0.0)
       dmg (>= 0.0.0)
@@ -15,15 +17,15 @@ SITE
       yum-epel (>= 0.0.0)
     mysql (5.5.3)
       yum-mysql-community (>= 0.0.0)
-    openssl (4.4.0)
-      chef-sugar (>= 3.1.1)
     packagecloud (0.0.19)
     php-fpm (0.7.4)
       apt (>= 0.0.0)
       yum (>= 3.0)
     runit (1.7.2)
       packagecloud (>= 0.0.0)
+    ssh-hardening (1.1.0)
     sudo (2.7.2)
+    timezone-ii (0.2.0)
     varnish (2.2.2)
       apt (~> 2.4)
       build-essential (>= 0.0.0)
@@ -39,6 +41,13 @@ SITE
       yum (>= 3.0)
 
 GIT
+  remote: https://gitlab.acid.cl/acidlabs/chef-dpkg-packages.git
+  ref: master
+  sha: 42ae7c1e2961cf268b08d2089f0cd66beaf78cbf
+  specs:
+    dpkg_packages (0.1.5)
+
+GIT
   remote: https://gitlab.acid.cl/acidlabs/chef-nginx.git
   ref: master
   sha: e31dd846fa5c6393b7fc9cb62b7e4b4d85214ad7
@@ -49,12 +58,15 @@ GIT
 DEPENDENCIES
   apt (>= 0)
   build-essential (>= 0)
+  dpkg_packages (>= 0)
+  fail2ban (>= 0)
   git (= 4.1.0)
   mysql (= 5.5.3)
   nginx (>= 0)
-  openssl (>= 0)
   php-fpm (>= 0)
   runit (>= 0)
+  ssh-hardening (>= 0)
   sudo (>= 0)
+  timezone-ii (>= 0)
   varnish (>= 0)
 
