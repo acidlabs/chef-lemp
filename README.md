@@ -24,7 +24,7 @@ bundle exec librarian-chef install
 We need to copy chef-solo to any server we’re going to setup. For each server, execute
 
 ```bash
-bundle exec knife prepare [user]@[host] -p [port]
+bundle exec knife solo prepare [user]@[host] -p [port]
 ```
 
 where
@@ -47,25 +47,22 @@ For the very same reason, we’re going to exaplain the example for you to ride 
   "run_list": [
     "recipe[sudo]",
     "recipe[apt]",
+    "recipe[dpkg_packages]",
+    "recipe[timezone-ii]",
     "recipe[build-essential]",
-    "recipe[ohai]",
     "recipe[runit]",
     "recipe[git]",
-    "recipe[chef-rails]",
     "recipe[php-fpm]",
-    "recipe[nginx]",
-    "recipe[nginx::apps]",
+    "recipe[nginx::server]",
     "recipe[mysql::server]",
-    "recipe[monit]",
-    "recipe[monit::mysql]",
-    "recipe[monit::nginx]",
-    "recipe[monit::ssh]"
+    "recipe[varnish]",
+    "recipe[fail2ban]"
   ],
 
 // You must define the sudoers users. You must created them before cooking.
   "authorization": {
     "sudo": {
-      "groups"        : ["deploy"],
+      "groups"        : ["sudo","admin"],
       "users"         : ["deploy"],
       "passwordless"  : true
     }
@@ -93,74 +90,35 @@ For the very same reason, we’re going to exaplain the example for you to ride 
 
 // Now we configure Nginx for our deploy user.
   "nginx": {
-    "user"          : "deploy",
-    "distribution"  : "precise",
-    "components"    : ["main"],
-
-// Here we configure Nginx Virtual Hosts
-    "apps": {
-
-// This is an example of a PHP application with a posible HTML index.
-      "example.com": {
-        "listen"     : [80],
-        "server_name": "example.com www.example.com xxx.xxx.xxx.xxx",
-        "public_path": "/home/deploy/www.example.com",
-        "locations": [
-          {
-            "path": "/",
-            "directives": [
-              "index index.html index.php",
-              "try_files $uri /index.php?q=$uri&$args;"
-            ]
-          },
-          {
-            "path": "~ \\.php$",
-            "directives": [
-            "fastcgi_pass unix:/var/run/php-fpm-www.sock;",
-              "fastcgi_index index.php;",
-              "include fastcgi_params;"
-            ]
-          }
-        ]
-      },
-
-// Another application example, in this case serving a CGI script.
-      "appcgi.example.com": {
-        "listen"     : [80],
-        "server_name": "appcgi.example.com",
-        "public_path": "/home/deploy/appcgi.example.com/",
-        "locations": [
-          {
-            "path": "/",
-            "directives": [
-              "try_files $uri /index.php?q=$uri&$args;"
-            ]
-          },
-          {
-            "path": "~ \\.php$",
-            "directives": [
-            "fastcgi_pass unix:/var/run/php-fpm-www.sock;",
-              "fastcgi_index index.php;",
-              "include fastcgi_params;"
-            ]
-          },
-          {
-            "path": "/cgi-bin",
-            "directives": [
-              "gzip off;",
-              "fastcgi_pass unix:/var/run/fcgiwrap.socket;",
-              "include /etc/nginx/fastcgi_params;",
-              "fastcgi_param SCRIPT_FILENAME /home/deploy/appcgi.example.com$fastcgi_script_name;"
-            ]
-          }
-        ]
-      }
+    "user"                : "deploy",
+    "client_max_body_size": "2m",
+    "worker_processes"    : "auto",
+    "worker_connections"  : 768,
+    "repository"          : "ppa",
+    "site"                : {
+      "listen"         : "8080"
     }
   },
+// Varnish server
+  "varnish": {
+    "listen_port"     : "80",
+    "backend_port"    : "8080"
+  },
 
-// All the packages you need goes here.
-  "chef-rails": {
-    "packages": ["libxml2-dev", "libxslt1-dev", "libncurses5-dev", "libncurses5-dev", "sendmail", "vim", "php5-mysql", "php5-curl", "fcgiwrap", "curl", "libcurl3", "libcurl3-dev"]
+// List all the system packages required by the services and gems you’re using in your apps.
+   "dpkg_packages": {
+    "pkgs": {
+      "tzdata"         : { "action": "upgrade" },
+      "libxml2-dev"    : { "action": "install" },
+      "sendmail"       : { "action": "install" },
+      "vim"            : { "action": "install" },
+      "fcgiwrap"       : { "action": "install" },
+      "curl"           : { "action": "install" },
+      "libcurl3"       : { "action": "install" },
+      "libcurl3-dev"   : { "action": "install" },
+      "libxslt1-dev"   : { "action": "install" },
+      "htop"           : { "action": "install" }
+    }
   },
 
 // We specicy user and group of PHP-FPM.
@@ -169,11 +127,14 @@ For the very same reason, we’re going to exaplain the example for you to ride 
     "group" : "deploy"
   },
 
-// Setting monit
-  "monit" : {
-    "notify_email"     : "notify@example.com",
-    "poll_period"      : "60",
-    "poll_start_delay" : "120"
+// Select Timezone you want to configure
+  "tz": "America/Santiago",
+
+// Fail2ban configuration to protect our server against SSH attack attempts
+  "fail2ban": {
+    "bantime" : 600,
+    "maxretry": 3,
+    "backend" : "auto"
   }
 }
 ```
@@ -185,7 +146,7 @@ Take a look to each cookbook `attributes/` files for more configuration paramete
 We’re now ready to cook. For each server you want to setup, execute
 
 ```bash
-knife cook [user]@[host] -p [port]
+knife solo cook [user]@[host] -p [port]
 ```
 
 ### 5. Recommendations
