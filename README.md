@@ -164,6 +164,7 @@ your deploy user and group.
 
 ```bash
 sudo chown <deploy_user>:<deploy:group> /var/run/fcgiwrap.socket
+```
 
 ### 6. Testing against a vagrant machine with knife-solo
 
